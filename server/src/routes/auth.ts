@@ -31,6 +31,7 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
 
     await UserModel.create(newUser);
 
+    console.log(`User '${username}' successfully registered.`);
     res.send({ done: true });
 });
 
@@ -53,12 +54,12 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
 
     const token = generateAuthToken(userExists);
 
-    res.send({ token });
+    const sendUser = userExists.toJSON();
+    res.send({ token,  user: { ...sendUser, password: '' } });
+    console.log(`User '${username}' successfully logged in.`);
 });
 
 router.get('/isLogged', authMiddleware, (req: Request, res: Response, next: NextFunction) => {
-    const tokenData = req.body.tokenData;
-    console.log('tokenData', tokenData);
     res.send("You are logged in!");
 });
 
