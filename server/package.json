@@ -1,0 +1,46 @@
+{
+  "name": "trackler-server",
+  "version": "0.0.1",
+  "description": "The backend of Trackler",
+  "main": "dist/index.js",
+  "scripts": {
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TracklerTeam/Trackler.git"
+  },
+  "keywords": [
+    "trackler"
+  ],
+  "author": "TracklerTeam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TracklerTeam/Trackler/issues"
+  },
+  "homepage": "https://github.com/TracklerTeam/Trackler#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^16.11.39",
+    "tslint": "^6.1.3",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "helmet": "^5.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.6",
+    "ulid": "^2.3.0"
+  }
+}
