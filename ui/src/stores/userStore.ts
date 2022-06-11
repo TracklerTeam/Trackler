@@ -56,6 +56,8 @@ export const useUserStore = defineStore('user', {
                 });
 
                 router.push('/login');
+
+                return true;
             } catch(error) {
                 console.log(error);
 

@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { authGuard, authGuardHome } from '@/utils/guards/authGuard';
-import HelloWorld from '@/components/HelloWorld.vue';
-import TheWelcome from '@/components/TheWelcome.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,14 +7,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HelloWorld,
+      component: import('@/components/Header.vue'),
       beforeEnter: [authGuardHome]
     },
     {
-      path: '/about',
-      name: 'about',
-      component: TheWelcome,
-      beforeEnter: [authGuard]
+      path: '/login',
+      name: 'login',
+      component: () => import('@/components/Login.vue')
     }
   ]
 })

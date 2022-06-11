@@ -1,6 +1,12 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { plugin, defaultConfig} from '@formkit/vue'
+import '@formkit/themes/genesis'
+
+import VueToast from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+
 
 import App from './App.vue'
 import router from './router'
@@ -11,5 +17,8 @@ pinia.use(piniaPluginPersistedstate)
 
 app.use(pinia)
 app.use(router)
+app.use(plugin, defaultConfig)
+app.config.compilerOptions.isCustomElement = tag => tag.startsWith('ion-')
+app.use(VueToast);
 
 app.mount('#app')
