@@ -1,15 +1,23 @@
 <template>
     <div class="grayOut" @click="goBack">
         <div class="background" @click.stop>
-            <h1 class="header-text">Login</h1>
+            <h1 class="header-text">Register</h1>
             <div class="forms">
+            <FormKit
+                    type="text"
+                    label="Email"
+                    v-model="email"
+                    outer-class="form-username"
+                    validation="required|email"
+                    @keydown.enter="register"
+                    />
                 <FormKit
                     type="text"
                     label="Username"
                     v-model="username"
                     outer-class="form-username"
                     validation="required"
-                    @keydown.enter="login"
+                    @keydown.enter="register"
                     />
                 <FormKit
                     :type="showPassword ? 'text' : 'password'"
@@ -30,15 +38,13 @@
                             }
                         }
                     }"
-                    @keydown.enter="login"
+                    @keydown.enter="register"
                     />
             </div>
             <div class="links-container">
-                <router-link class="link" to="/forgot-password">Forgot your password?</router-link>
-                <router-link class="link" to="/forgot-username">Forgot your username?</router-link>
-                <router-link class="link" to="/register">Create a new account</router-link>
+                <router-link class="link" to="/login">I already have an account</router-link>
             </div>
-            <button class="button" @click="login">Login</button>
+            <button class="button" @click="register">Register</button>
         </div>
     </div>
 </template>
@@ -48,11 +54,12 @@ import router from "@/router";
 import { useUserStore } from "@/stores/userStore";
 
 export default{
-    name: "Login",
+    name: "Register",
     data: () => {
         return {
             username: "",
             password: "",
+            email: "",
             showPassword: false
         }
     },
@@ -67,16 +74,24 @@ export default{
             this.showPassword = !this.showPassword;
             document.getElementsByClassName("showPassword")[0].setAttribute("name", this.showPassword ? "eye-off-outline" : "eye-outline");
         },
-        login: async function() {
-            if(this.username && this.password) {
-                const response = await useUserStore().login(this.username, this.password);
-                if(!response) {
+        register: async function() {
+            if(this.username && this.password && this.email) {
+                const response = await useUserStore().register(this.username, this.email, this.password);
+                if(response.failed) {
                     this.$toast.open({
-                        message: "Invalid username or password",
+                        message: response.error,
                         type: "error",
                         duration: 10000,
                         queue: false               
                     });
+                } else {
+                    this.$toast.open({
+                        message: "Successfully registered",
+                        type: "success",
+                        duration: 10000,
+                        queue: false               
+                    });
+                    router.push('/login');
                 }
             }
         }

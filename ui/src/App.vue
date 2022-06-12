@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
+import BurgerMenu from './components/BurgerMenu.vue';
 import { RouterLink, RouterView } from 'vue-router'
+import { useUserStore } from './stores/userStore';
 </script>
 
 <template>
   <div class="app">
     <Header />
+    <BurgerMenu v-if="useUserStore().isAuth"/>
 
     <RouterView />
   </div>

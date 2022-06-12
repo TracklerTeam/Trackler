@@ -36,6 +36,8 @@ export const useUserStore = defineStore('user', {
 
                 this.isAuthenticated = true;
                 router.push("/");
+
+                return true;
             } catch (error) {
                 console.log(error);
 
@@ -55,13 +57,11 @@ export const useUserStore = defineStore('user', {
                     password
                 });
 
-                router.push('/login');
-
-                return true;
+                return {failed: false};
             } catch(error) {
                 console.log(error);
 
-                return false;
+                return {failed: true, error: error.response.data.error};
             }
         }
     },

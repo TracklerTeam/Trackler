@@ -42,6 +42,14 @@ export default{
             this.authenticated = true;
             this.user = useUserStore().user;
         }
+    },
+    watch: {
+        '$route': function() {
+            if(useUserStore().isAuth) {
+            this.authenticated = true;
+            this.user = useUserStore().user;
+        }
+        }
     }
 }
 </script>
@@ -99,7 +107,6 @@ header {
         display: flex;
         align-items: center;
         justify-content: center;
-        left: 40px;
     }
 
     .navigation {

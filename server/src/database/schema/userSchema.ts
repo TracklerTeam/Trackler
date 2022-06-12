@@ -15,10 +15,13 @@ const IUserSchema = new Schema<IUser>(
       type: String,
       required: true,
       lowercase: true,
-      index: true,
-      unique: true,
     },
-    username: { type: String, required: true },
+    username: {
+    type: String,
+    required: true,
+    index: true,
+    unique: true
+    },
     password: { type: String, required: true },
     role: { type: String, required: true },
   },
