@@ -10,7 +10,7 @@ import { useUserStore } from './stores/userStore';
     <Header />
     <BurgerMenu v-if="useUserStore().isAuth"/>
 
-    <RouterView />
+    <RouterView class="content" />
   </div>
 </template>
 
@@ -26,5 +26,11 @@ import { useUserStore } from './stores/userStore';
 .app {
   min-height: 100vh;
   position: relative;
+}
+
+.content {
+  position: absolute;
+  top: 80px;
+  left: 240px;
 }
 </style>

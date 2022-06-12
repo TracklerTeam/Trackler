@@ -25,6 +25,13 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('@/components/Home.vue'),
       beforeEnter: [authGuardDashboard]
+    },
+    {
+      path: '/search/:query',
+      name: 'search',
+      component: () => import('@/components/Search.vue'),
+      props: true,
+      beforeEnter: [authGuard]
     }
   ]
 })

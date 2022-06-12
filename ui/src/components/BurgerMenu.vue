@@ -50,7 +50,8 @@ export default{
             searched: "",
             closed: false,
             selected: "Watchlist",
-            user: {}
+            user: {},
+            timeoutTimer: null
         }
     },
     methods: {
@@ -76,20 +77,38 @@ export default{
     },
     watch: {
         '$route': function() {
-            if(router.currentRoute.value.fullPath.includes("dashboard"))
+            if(router.currentRoute.value.fullPath.includes("dashboard")) {
                 this.selected = "Watchlist";
-            else if(router.currentRoute.value.fullPath.includes("search")) {
-                this.selected = "Search";
                 this.searched = "";
             }
-            else if(router.currentRoute.value.fullPath.includes("calendar"))
+            else if(router.currentRoute.value.fullPath.includes("search"))  {
+                this.selected = "Search";
+                this.searched = router.currentRoute.value.params.query;
+            }
+            else if(router.currentRoute.value.fullPath.includes("calendar")) {
                 this.selected = "Upcoming";
-            else if(router.currentRoute.value.fullPath.includes("discover"))
+                this.searched = "";
+            }
+            else if(router.currentRoute.value.fullPath.includes("discover")) {
                 this.selected = "Discover";
-            else if(router.currentRoute.value.fullPath.includes("profile"))
+                this.searched = "";
+            }
+            else if(router.currentRoute.value.fullPath.includes("profile")) {
                 this.selected = "Profile";
-            else if(router.currentRoute.value.fullPath.includes("community"))
+                this.searched = "";
+            }
+            else if(router.currentRoute.value.fullPath.includes("community")) {
                 this.selected = "Community";
+                this.searched = "";
+            }
+        },
+        'searched': function() {
+            if(this.timeoutTimer)
+                clearTimeout(this.timeoutTimer);
+            if(this.searched !== "")
+                this.timeoutTimer = setTimeout(() => router.replace("/search/" + this.searched), 1000);
+            else
+                router.replace("/dashboard");
         }
     },
     mounted: function() {
@@ -100,14 +119,12 @@ export default{
 
 <style lang="scss" scoped>
 .burger {
-    position: absolute;
+    position: fixed;
     padding-left: 0;
     left: 0;
     height: 100vh;
     max-width: 200px;
     background: #4B4C4E;
-    transition: all ease-in 5ms;
-
     .burger-container {
         margin-top: 40px;
         padding: 10px;
@@ -126,6 +143,8 @@ export default{
             padding-top: 5px;
             padding-bottom: 5px;
             padding-right: 10px;
+
+            transition: all 0.2s ease-in-out;
 
             &:hover {
                 background: #5F5F5F;
@@ -192,9 +211,7 @@ export default{
 
         hr {
             border: 1px solid #292A2C;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            margin-left: 10px;
+            margin: 10px;
         }
     }
 }

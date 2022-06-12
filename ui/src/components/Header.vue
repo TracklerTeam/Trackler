@@ -48,7 +48,7 @@ export default{
             if(useUserStore().isAuth) {
             this.authenticated = true;
             this.user = useUserStore().user;
-        }
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { plugin, defaultConfig} from '@formkit/vue'
+import easySpinner from 'vue-easy-spinner';
 import '@formkit/themes/genesis'
 import './index.css'
 
@@ -19,6 +20,7 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 app.use(router)
 app.use(plugin, defaultConfig)
+app.use(easySpinner, {prefix: 'easy'});
 app.config.compilerOptions.isCustomElement = tag => tag.startsWith('ion-')
 app.use(VueToast);
 
