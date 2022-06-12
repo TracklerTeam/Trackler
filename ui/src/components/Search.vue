@@ -101,8 +101,6 @@ export default {
             this.shows = response.data.results;
             this.loading = false;
             this.total_pages = response.data.total_pages;
-
-            console.log(this.page);
         },
         showProfile: function(id: Number): void {
             router.push(`/show/${id}`);
@@ -111,19 +109,23 @@ export default {
             let response = null;
 
             try {
-                response = await axios.get(`${API_URL}/user/follow/show/${id}`, {
+                response = await axios.get(`${API_URL}/user/show/follow/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
 
-                this.followedShows = response.data.followed_shows;
+                this.followedShows = response.data;
+                useUserStore().updateFollowed(this.followedShows);
             } catch (error: any) {
-                if(error.response.status === 401) 
+                if(error.response.status === 401)
                     return useUserStore().logout();
+
                 
+                this.followedShows = error.response.data.followed_shows;
+                useUserStore().updateFollowed(this.followedShows);
                 return this.$toast.open({
-                    message: 'Something went wrong',
+                    message: error.response.data.error,
                     type: "error",
                     duration: 10000,
                     queue: false               
@@ -134,13 +136,14 @@ export default {
             let response = null;
 
             try {
-                response = await axios.get(`${API_URL}/user/unfollow/show/${id}`, {
+                response = await axios.get(`${API_URL}/user/show/unfollow/${id}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 });
 
-                this.followedShows = response.data.followed_shows;
+                this.followedShows = response.data;
+                useUserStore().updateFollowed(this.followedShows);
             } catch (error: any) {
                 if(error.response.status === 401) 
                     return useUserStore().logout();
@@ -162,6 +165,8 @@ export default {
     mounted: function() {
         this.queryed = this.query;
         this.performSearch();
+
+        this.followedShows = useUserStore().user.followed_shows;
     },
     watch: {
         '$route': async function () {

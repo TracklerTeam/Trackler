@@ -3,6 +3,7 @@ export interface IUser {
     email: string;
     username: string;
     role: string;
+    followed_shows: number[];
 }
 
 export interface IUserStore {

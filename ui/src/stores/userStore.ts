@@ -10,7 +10,8 @@ export const useUserStore = defineStore('user', {
             _id: '',
             email: '',
             username: '',
-            role: ''
+            role: '',
+            followed_shows: []
         },
         isAuthenticated: false
     }),
@@ -33,6 +34,7 @@ export const useUserStore = defineStore('user', {
                 this.user.email = response.data.user.email;
                 this.user.username = response.data.user.username;
                 this.user.role = response.data.user.role;
+                this.user.followed_shows = response.data.user.followed_shows;
 
                 this.isAuthenticated = true;
                 router.push("/");
@@ -63,6 +65,9 @@ export const useUserStore = defineStore('user', {
 
                 return {failed: true, error: error.response.data.error};
             }
+        },
+        updateFollowed(followedShows: number[]) {
+            this.user.followed_shows = followedShows;
         }
     },
     persist: true

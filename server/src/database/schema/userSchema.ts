@@ -6,6 +6,7 @@ export interface IUser {
   password: string;
   username: string;
   role: string;
+  followed_shows: number[];
 }
 
 const IUserSchema = new Schema<IUser>(
@@ -24,6 +25,7 @@ const IUserSchema = new Schema<IUser>(
     },
     password: { type: String, required: true },
     role: { type: String, required: true },
+    followed_shows: { type: [Number], required: true}
   },
   { collection: 'user', timestamps: true }
 );

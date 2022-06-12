@@ -26,7 +26,8 @@ router.post('/register', async (req: Request, res: Response, next: NextFunction)
       email,
       username,
       password: hash,
-      role: "user"
+      role: "user",
+      followed_shows: []
     };
 
     await UserModel.create(newUser);

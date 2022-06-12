@@ -1,8 +1,4 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { IUser, UserModel  } from '../database/schema/userSchema';
-import { ulid } from 'ulid';
-import { passwordHash, comparePassword } from "../utils/password";
-import { generateAuthToken } from "../utils/jwt";
 import { authMiddleware } from "../utils/middleware/auth";
 import axios from 'axios';
 
