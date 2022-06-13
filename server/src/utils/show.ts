@@ -14,9 +14,9 @@ export const addShow = async (id: string) => {
             seasons: [],
             year: response.data.first_air_date ? response.data.first_air_date.substring(0, 4) : 0,
             still_running: response.data.in_production ? response.data.in_production : false,
-            network: response.data.networks ? response.data.networks[0].name : '',
-            network_id: response.data.networks ? response.data.networks[0].id : '',
-            genre: response.data.genres ? response.data.genres.map((genre: { name: any }) => genre.name) : [],
+            network: response.data.networks.length ? response.data.networks[0].name : '',
+            network_id: response.data.networks.length ? response.data.networks[0].id : '',
+            genre: response.data.genres.length ? response.data.genres.map((genre: { name: any }) => genre.name) : [],
             updatedAt: moment().toDate()
         });
 
@@ -43,6 +43,7 @@ export const addShow = async (id: string) => {
                     image: seasonResponse.data.episodes[j - 1].still_path ? `${process.env.TMDB_IMG_URL}/w500${seasonResponse.data.episodes[j - 1].still_path}` : '',
                     duration: seasonResponse.data.episodes[j - 1].runtime ? seasonResponse.data.episodes[j - 1].runtime : 0,
                     number: seasonResponse.data.episodes[j - 1].episode_number ? seasonResponse.data.episodes[j - 1].episode_number : j,
+                    air_date: seasonResponse.data.episodes[j - 1].air_date ? seasonResponse.data.episodes[j - 1].air_date : '',
                 });
             }
             seasons[i - 1].episodes = episodes;

@@ -4,9 +4,9 @@
             <easy-spinner size="90px" />
         </div>
         <div class="show-item" v-for="show in shows" :key="show.name">
-            <img :src="show.backdrop_path ? 'https://image.tmdb.org/t/p/w500/' + show.backdrop_path : 'https://via.placeholder.com/500x281'" @click="showProfile(show.id)"/>
+            <img :src="show.backdrop_path ? 'https://image.tmdb.org/t/p/w500/' + show.backdrop_path : 'https://via.placeholder.com/500x281'" @click="$router.push(`/show/${show.id}`)"/>
             <div class="show-info">
-                <h3 class="title" @click="showProfile(show.id)">{{ show.name }}</h3>
+                <h3 class="title" @click="$router.push(`/show/${show.id}`)">{{ show.name }}</h3>
                 <ion-icon v-if="!followedShows.includes(show.id)" name="add-circle-outline" @click="addShow(show.id)"></ion-icon>
                 <ion-icon v-if="followedShows.includes(show.id)" name="remove-circle-outline" @click="removeShow(show.id)"></ion-icon>
             </div>
@@ -15,13 +15,13 @@
             <ion-icon name="sad"></ion-icon>
             <h3>No results found</h3>
         </div>
-        <div class="pages">
+        <div class="pages" v-if="!loading">
             <div>
                 <div class="page" v-if="page > 1 && total_pages" @click="changePage(page - 1)">
                     <ion-icon name="arrow-back-outline"></ion-icon>
                 </div>
             </div>
-            <div v-if="total_pages <= show_pages">
+            <div v-if="total_pages <= show_pages && total_pages > 1">
                 <div :class="['page', pagei === page ? 'selected' : '']" v-for="pagei in total_pages" :key="pagei" @click="changePage(pagei)">
                     <span>{{ pagei }}</span>
                 </div>
@@ -102,9 +102,6 @@ export default {
             this.loading = false;
             this.total_pages = response.data.total_pages;
         },
-        showProfile: function(id: Number): void {
-            router.push(`/show/${id}`);
-        },
         addShow: async function(id: Number): Promise<void> {
             let response = null;
 
@@ -173,9 +170,6 @@ export default {
             this.loading = true;
             this.shows = [];
             this.queryed = router.currentRoute.value.params.query;
-            if(this.queryed === '' || !this.queryed) {
-                router.push('/dashboard');
-            }
 
             this.performSearch();
         }
@@ -188,7 +182,6 @@ export default {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        justify-content: center;
         .show-item {
             display: flex;
             flex-direction: column;

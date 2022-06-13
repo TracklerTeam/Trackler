@@ -21,7 +21,7 @@ app.use(pinia)
 app.use(router)
 app.use(plugin, defaultConfig)
 app.use(easySpinner, {prefix: 'easy'});
-app.config.compilerOptions.isCustomElement = tag => tag.startsWith('ion-')
+app.config.compilerOptions.isCustomElement = tag => tag.startsWith('ion-');
 app.use(VueToast);
 
 app.mount('#app')

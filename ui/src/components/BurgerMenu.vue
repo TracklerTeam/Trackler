@@ -101,13 +101,17 @@ export default{
                 this.selected = "Community";
                 this.searched = "";
             }
+            else {
+                this.selected = "Custom";
+                this.searched = "";
+            }
         },
         'searched': function() {
             if(this.timeoutTimer)
                 clearTimeout(this.timeoutTimer);
             if(this.searched !== "")
                 this.timeoutTimer = setTimeout(() => router.replace("/search/" + this.searched), 1000);
-            else
+            else if(this.selected === "Search" && this.searched === "")
                 router.replace("/dashboard");
         }
     },
@@ -125,6 +129,7 @@ export default{
     height: 100vh;
     max-width: 200px;
     background: #4B4C4E;
+    z-index: 98;
     .burger-container {
         margin-top: 40px;
         padding: 10px;
