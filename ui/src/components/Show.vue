@@ -45,11 +45,11 @@
                             <img :src="episode.image ? episode.image : 'https://via.placeholder.com/500x281'"/>
                             <div class="info">
                                 <div class="title">
-                                    <h2>{{ `${episode.number}x${seasonSelected.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})} - ${episode.name}`}}</h2>
+                                    <h2>{{ `${seasonSelected}x${episode.number.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})} - ${episode.name}`}}</h2>
                                     <h3>{{ `${episode.air_date ? `${episode.air_date} - ${episode.duration}` : episode.duration}` }}m</h3>
                                 </div>
-                                <ion-icon v-if="!episodesWatched.includes(parseInt(episode._id))" name="eye-outline" @click="watchEpisode(episode._id)"></ion-icon>
-                                <ion-icon v-if="episodesWatched.includes(parseInt(episode._id))" name="eye-off-outline" @click="unwatchEpisode(episode._id)"></ion-icon>
+                                <ion-icon :v-bind="episodesWatched" v-if="!episodesWatched.includes(episode._id)" name="eye-outline" @click="watchEpisode(episode._id)"></ion-icon>
+                                <ion-icon :v-bind="episodesWatched" v-if="episodesWatched.includes(episode._id)" name="eye-off-outline" @click="unwatchEpisode(episode._id)"></ion-icon>
                             </div>
                         </div>
                     </div>
@@ -110,6 +110,24 @@ export default {
                 this.episodes = this.show.seasons[0].episodes;
 
                 this.followed = this.user.followed_shows.includes(parseInt(this.show._id));
+
+                try {
+                    const newResp = await axios.get(`${API_URL}/user/show/${this.show._id}/getWatched`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                        }
+                    });
+
+                    this.episodesWatched = newResp.data;
+                } catch (error: any) {
+                    return this.$toast.open({
+                        message: `Couldn't get watched episodes`,
+                        type: "error",
+                        duration: 10000,
+                        queue: false               
+                    });
+                }
             } catch (error: any) {
                 if(error.response.status === 401)
                     return useUserStore().logout();
@@ -146,6 +164,50 @@ export default {
                 useUserStore().updateFollowed(this.followedShows);
 
                 this.followed = !this.followed;
+            } catch (error: any) {
+                if(error.response.status === 401)
+                    return useUserStore().logout();
+
+                return this.$toast.open({
+                    message: error.response.data.error,
+                    type: "error",
+                    duration: 10000,
+                    queue: false               
+                });
+            }
+        },
+        watchEpisode: async function(id: String): Promise<any> {
+            try {
+                const response = await axios.get(`${API_URL}/user/show/${this.show._id}/watch/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+
+                this.episodesWatched = response.data;
+            } catch (error: any) {
+                if(error.response.status === 401)
+                    return useUserStore().logout();
+
+                return this.$toast.open({
+                    message: error.response.data.error,
+                    type: "error",
+                    duration: 10000,
+                    queue: false               
+                });
+            }
+        },
+        unwatchEpisode: async function(id: String): Promise<any> {
+            try {
+                const response = await axios.get(`${API_URL}/user/show/${this.show._id}/unwatch/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+
+                this.episodesWatched = response.data;
             } catch (error: any) {
                 if(error.response.status === 401)
                     return useUserStore().logout();
@@ -205,6 +267,7 @@ export default {
 
                 hr {
                     margin: 20px;
+                    margin-top: 55px;
                     padding: 0.3px;
                     background: #292A2C;;
                     opacity: 0.5;
@@ -271,7 +334,7 @@ export default {
 
                                     cursor: pointer;
                                     transition: all 0.3s ease-in-out;
-                                    
+
                                     &:hover {
                                         color: #1E68FC;
                                     }
