@@ -5,6 +5,7 @@ import { IShowUser, ShowUserModel } from "../../database/schema/showUserSchema";
 import { IShow, ShowModel } from '../../database/schema/showSchema';
 import { ulid } from 'ulid';
 import { addShow } from "../../utils/show";
+import moment from "moment";
 
 const router = Router();
 
@@ -133,40 +134,7 @@ router.get('/:id/getUnwatched', authMiddleware, async (req: Request, res: Respon
 
 });
 
-router.get('/:id/nextEpisode', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
-    let show = await ShowModel.findOne({ _id: req.params.id });
-
-    if(!show) {
-        try {
-            show = await addShow(req.params.id);
-        } catch(error) {
-            return res.status(400).send({ error: 'Show not found' });
-        }
-    }
-
-    const showUser = await ShowUserModel.findOne({ user_id: req.body.tokenData._id, show_id: req.params.id });
-    if(!showUser)
-        return res.status(400).send({ error: 'Show not followed' });
-
-    let nextEpisode = null;
-    for(const season of show.seasons) {
-        for(const episode of season.episodes) {
-            if(!showUser.watchedEpisodes.includes(episode._id)) {
-                nextEpisode = episode;
-                break;
-            }
-        }
-        if(nextEpisode)
-            break;
-    }
-
-    if(!nextEpisode)
-        return res.status(400).send({ error: 'No next episode' });
-
-    res.send(nextEpisode);
-});
-
-router.get('/:id/getPercentageWatched', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:id/getStats', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
     let show = await ShowModel.findOne({ _id: req.params.id });
 
     if(!show) {
@@ -183,8 +151,28 @@ router.get('/:id/getPercentageWatched', authMiddleware, async (req: Request, res
 
     let watchedEpisodes = 0;
     let totalEpisodes = 0;
+    let nextEpisode = null;
+    let upcomingEpisode = null;
+    let upcomingSeason = 0;
+    let seasonNumber = 0;
+    let remainingSeasonEpisodes = 0;
     for(const season of show.seasons) {
         for(const episode of season.episodes) {
+            if(moment(episode.air_date).isAfter(moment()) || !episode.air_date) {
+                if(!upcomingEpisode) {
+                    upcomingEpisode = episode;
+                    upcomingSeason = season.number;
+                }
+
+                continue;
+            }
+
+            if(!showUser.watchedEpisodes.includes(episode._id) && !nextEpisode) {
+                nextEpisode = episode;
+                seasonNumber = season.number;
+                remainingSeasonEpisodes = season.episodes.length - episode.number + 1;
+            }
+
             totalEpisodes++;
 
             if(showUser.watchedEpisodes.includes(episode._id))
@@ -192,8 +180,74 @@ router.get('/:id/getPercentageWatched', authMiddleware, async (req: Request, res
         }
     }
 
-    const percentage = Math.round((watchedEpisodes / totalEpisodes) * 100);
-    res.send({ percentage });
+    res.send({ show: { _id: show._id, name: show.name }, nextEpisode, totalEpisodes, watchedEpisodes, seasonNumber, remainingSeasonEpisodes, upcomingEpisode, upcomingSeason });
+});
+
+router.get('/getDashboard', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+    const shows = await ShowUserModel.find({ user_id: req.body.tokenData._id });
+
+    if(!shows)
+        return res.send([]);
+
+    const dashboard = [];
+    for(const show of shows) {
+        let showData = await ShowModel.findOne({ _id: show.show_id });
+        if(!showData) {
+            try {
+                showData = await addShow(show.show_id);
+            } catch(error) {
+                return res.status(400).send({ error: 'Show not found' });
+            }
+        }
+
+        let watchedEpisodes = 0;
+        let totalEpisodes = 0;
+        let nextEpisode = null;
+        let upcomingEpisode = null;
+        let upcomingSeason = 0;
+        let seasonNumber = 0;
+        let remainingSeasonEpisodes = 0;
+        for(const season of showData.seasons) {
+            for(const episode of season.episodes) {
+                if(moment(episode.air_date).isAfter(moment()) || !episode.air_date) {
+                    if(!upcomingEpisode) {
+                        upcomingEpisode = episode;
+                        upcomingSeason = season.number;
+                    }
+
+                    continue;
+                }
+
+                if(!show.watchedEpisodes.includes(episode._id) && !nextEpisode) {
+                    nextEpisode = episode;
+                    seasonNumber = season.number;
+                    remainingSeasonEpisodes = season.episodes.length - nextEpisode.number + 1;
+                }
+
+                totalEpisodes++;
+
+                if(show.watchedEpisodes.includes(episode._id))
+                    watchedEpisodes++;
+            }
+        }
+
+        if(nextEpisode)
+            dashboard.push({
+                show: {
+                    _id: showData._id,
+                    name: showData.name,
+                },
+                nextEpisode,
+                totalEpisodes,
+                watchedEpisodes,
+                seasonNumber,
+                remainingSeasonEpisodes,
+                upcomingEpisode,
+                upcomingSeason
+            });
+    }
+
+    res.send(dashboard);
 });
 
 export default router;

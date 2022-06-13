@@ -15,10 +15,11 @@
                 </router-link>
             </ul>
             <ul v-show="authenticated" class="navigation">
+                <ion-icon name="notifications-outline"></ion-icon>
                 <router-link class="link" :to="'/profile/' + user._id">
                     <li>
-                        <ion-icon name="person-circle" v-if="!user.photoURL"></ion-icon>
                         {{ user.username }}
+                        <ion-icon name="person-circle" v-if="!user.photoURL"></ion-icon>
                     </li>
                 </router-link>
             </ul>
@@ -82,20 +83,22 @@ header {
 
     li {
         padding: 16px;
-        margin-left: 16px;
         display: flex;
         flex-direction: row;
         align-items: center;
         text-align: center;
 
         ion-icon {
-            margin-right: 10px;
+            margin-left: 10px;
             font-size: 25px;
+            transition: all 0.2s ease-in-out;
         }
     }
 
     .link {
         font-size: 16px;
+
+        transition: all 0.2s ease-in-out;
 
         &:hover {
             color: #1E68FC;
@@ -116,6 +119,17 @@ header {
         top:0;
         height: 100%;
         right: 40px;
+
+        ion-icon {
+            margin-left: 10px;
+            font-size: 25px;
+
+            transition: all 0.2s ease-in-out;
+            &:hover {
+                color: #1E68FC;
+                cursor: pointer;
+            }
+        }
     }
 }
 

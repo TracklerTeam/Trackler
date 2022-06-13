@@ -87,7 +87,8 @@ export default {
                     }
                 });
             } catch(error: any) {
-                if(error.response.status === 401) 
+                console.error(error);
+                if(error.response && error.response.status === 401) 
                     return useUserStore().logout();
                 
                 return this.$toast.open({
@@ -166,11 +167,11 @@ export default {
         this.followedShows = useUserStore().user.followed_shows;
     },
     watch: {
-        '$route': async function () {
+        '$route': async function() {
             this.loading = true;
             this.shows = [];
-            this.queryed = router.currentRoute.value.params.query;
 
+            this.queryed = await this.$route.params.query;
             this.performSearch();
         }
     }
@@ -205,6 +206,11 @@ export default {
                 ion-icon {
                     font-size: 2rem;
                     cursor: pointer;
+                    transition: all 0.3s ease-in-out;
+
+                    &:hover {
+                        color:#00A0FF;
+                    }
                 }
 
                 .title {

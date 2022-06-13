@@ -110,9 +110,9 @@ export default{
             if(this.timeoutTimer)
                 clearTimeout(this.timeoutTimer);
             if(this.searched !== "")
-                this.timeoutTimer = setTimeout(() => router.replace("/search/" + this.searched), 1000);
+                this.timeoutTimer = setTimeout(() => router.push("/search/" + this.searched), 1000);
             else if(this.selected === "Search" && this.searched === "")
-                router.replace("/dashboard");
+                router.push("/dashboard");
         }
     },
     mounted: function() {
@@ -131,7 +131,7 @@ export default{
     background: #4B4C4E;
     z-index: 98;
     .burger-container {
-        margin-top: 40px;
+        margin-top: 44px;
         padding: 10px;
         padding-left: 0;
         padding-right: 0;
