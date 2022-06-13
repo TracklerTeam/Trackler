@@ -42,7 +42,7 @@
                     </div>
                     <div class="episodesList">
                         <div class="ep" v-for="episode in episodes" :key="episode._id">
-                            <img :src="episode.image ? episode.image : 'https://via.placeholder.com/500x281'" height="500" width="281" />
+                            <img :src="episode.image ? episode.image : 'https://via.placeholder.com/500x281'"/>
                             <div class="info">
                                 <div class="title">
                                     <h2>{{ `${episode.number}x${seasonSelected.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})} - ${episode.name}`}}</h2>
@@ -223,14 +223,19 @@ export default {
                         width: calc(100% - 80px);
                         flex-wrap: wrap;
                         align-items: center;
+                        justify-content: center;
 
                         .ep {
                             display: flex;
                             flex-direction: column;
-                            width: 281px;
+                            width: 500px;
                             margin: 20px;
                             min-height: 250px;
                             box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+
+                            img {
+                                width: 100%;
+                            }
 
                             .info {
                                 display: flex;
@@ -238,6 +243,8 @@ export default {
                                 justify-content: space-between;
                                 align-items: center;
                                 min-height: 90px;
+                                margin-left: 10px;
+                                margin-right:10px;
 
                                 .title {
                                     h2 {
@@ -261,6 +268,13 @@ export default {
                                     font-size: 24px;
                                     color: #292A2C;
                                     min-width: 30px;
+
+                                    cursor: pointer;
+                                    transition: all 0.3s ease-in-out;
+                                    
+                                    &:hover {
+                                        color: #1E68FC;
+                                    }
                                 }
                             }
                         }

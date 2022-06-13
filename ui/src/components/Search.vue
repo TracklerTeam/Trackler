@@ -182,6 +182,7 @@ export default {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        justify-content: center;
         .show-item {
             display: flex;
             flex-direction: column;
